@@ -22,7 +22,7 @@ class Qu_fsm:
     def __init__(self, file_path):
         self.json_file = Qu_json(file_path)
 
-    def set_attrs(self, **attrs):
+    def set_default_attrs(self, **attrs):
         if self._all_funcs:
             raise Exception("You can set attrs only before functions definition")
         for key in attrs:
@@ -47,7 +47,7 @@ class Qu_fsm:
                 
         self.json_file.save()
                 
-    def command(self, **attrs):  
+    def method(self, **attrs):  
         def wrap(func):
             out_attrs = dict(self._all_attrs)
             
@@ -58,7 +58,7 @@ class Qu_fsm:
             return func
         return wrap
 
-    def handle_command(self, *args):   
+    def handle_method(self, *args):   
         out_attrs = dict(self._current_attrs)
         keys = list(self._current_attrs)[::-1]
 
