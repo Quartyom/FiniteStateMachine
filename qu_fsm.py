@@ -58,13 +58,15 @@ class Qu_fsm:
             return func
         return wrap
 
-    def handle_method(self, *args):   
+    def handle_method(self, *args, strict = False):   
         out_attrs = dict(self._current_attrs)
         keys = list(self._current_attrs)[::-1]
 
         if str(out_attrs) in self._all_funcs:
             self._all_funcs[str(out_attrs)](*args)
             return True
+
+        if strict: return False
         
         for key in keys:
             out_attrs[key] = self._all_attrs[key]
@@ -72,6 +74,36 @@ class Qu_fsm:
                 self._all_funcs[str(out_attrs)](*args)
                 return True
 
-        print(self._current_attrs, out_attrs, self._all_attrs)
-        print(self._all_funcs)
         return False
+
+    # returns the function by current state or None
+    def get_method(self, strict = False):
+        out_attrs = dict(self._current_attrs)
+        keys = list(self._current_attrs)[::-1]
+
+        if str(out_attrs) in self._all_funcs:
+            return self._all_funcs[str(out_attrs)]
+            
+        if strict: return None 
+        
+        for key in keys:
+            out_attrs[key] = self._all_attrs[key]
+            if str(out_attrs) in self._all_funcs:
+                return self._all_funcs[str(out_attrs)]
+
+        return None
+
+    # returns the function by attrs or None
+    def find_method(self, **attrs):
+        out_attrs = dict(attrs)
+        keys = list(attrs)[::-1]
+
+        for key in self._all_attrs:
+            if key not in attrs:
+                out_attrs[key] = self._all_attrs[key]
+
+        if str(out_attrs) in self._all_funcs:
+            return self._all_funcs[str(out_attrs)]
+            
+        return None 
+        
