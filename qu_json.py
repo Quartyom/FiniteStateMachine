@@ -10,6 +10,8 @@ class Qu_json:
         except: self.save()
 
     def save(self):
+        file = open(self.file_path, "w")
+        file.close()
         with open(self.file_path, "w") as file:
             json.dump(self.data, file, ensure_ascii=False, indent=4)
             return self.data

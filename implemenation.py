@@ -2,7 +2,7 @@ from qu_fsm import *
 
 com = Qu_fsm("com.json")
 
-com.set_default_attrs(com_name = "/test", role = "user")
+com.set_default_attrs(com_name = "/empty", role = "user")
 
 def prepare_command(inp):
     inp = inp.split(" ")
@@ -11,18 +11,19 @@ def prepare_command(inp):
         print("An error has occured!")
   
 @com.method()
-def error_com(*args):
+def empty_com(*args):
     print("Command is not found")
+    if args: print("args:,", *args)
 
 @com.method(com_name = "/help")
 def help_com(*args):
     print("How can i help you?")
 
-@com.method(com_name = "/admin", role = "admin")
+@com.methods(com_name = ["/admin", "/manage"], role = ["admin", "superadmin"])
 def admin_com(*args):
     print("You're admin")
 
-@com.method(com_name = "/admin")
+@com.methods(com_name = ["/admin", "/manage"])
 def admin_com(*args):
     print("You have no rights")
 
