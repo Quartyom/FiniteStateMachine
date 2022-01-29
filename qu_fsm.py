@@ -31,7 +31,7 @@ class Qu_fsm:
     _current_attrs = dict()
 
     def __init__(self, file_path):
-        self.json_file = Qu_json(file_path)
+        self._json_file = Qu_json(file_path)
 
     def set_default_attrs(self, **attrs):
         if self._all_methods:
@@ -40,12 +40,15 @@ class Qu_fsm:
             self._all_attrs[key] = attrs[key]
             self._wrapped_all_attrs[key] = [attrs[key]]
 
-        if self.json_file.data:    # if data exists
-            self._current_attrs = self.json_file.data
+        if self._json_file.data:    # if data exists  
+            if self._json_file.data.keys() != attrs.keys():
+                raise Exception("Reconfigured default attrs, firstly delete " + self._json_file.file_path)
+
+            self._current_attrs = self._json_file.data
         else:
             self._current_attrs = dict(self._all_attrs)
-            self.json_file.data = self._current_attrs
-            self.json_file.save()
+            self._json_file.data = self._current_attrs
+            self._json_file.save()
 
     def get_attr(self, attr_name):
         return self._current_attrs[attr_name]
@@ -57,7 +60,7 @@ class Qu_fsm:
             else:
                 self._current_attrs[key] = attrs[key]
                 
-        self.json_file.save()
+        self._json_file.save()
                 
     def method(self, **attrs):  
         def wrap(func):
